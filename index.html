@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اردو کیبورڈ — Urdu Keyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #131120;
+    --ink-2: #1b1830;
+    --ink-3: #241f3d;
+    --gold: #cda43f;
+    --gold-soft: #e9d39a;
+    --maroon: #a8434f;
+    --maroon-soft: #d97783;
+    --ivory: #f3ead9;
+    --muted: #9c96b0;
+    --border: rgba(205,164,63,0.22);
+    --border-soft: rgba(243,234,217,0.08);
+    --radius: 14px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #241f3d 0%, transparent 60%),
+      radial-gradient(1000px 700px at 110% 10%, #2a2140 0%, transparent 55%),
+      var(--ink);
+    color: var(--ivory);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+  }
+
+  .wrap{
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    text-align:center;
+    margin-bottom: 34px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    opacity:.85;
+    margin-bottom: 14px;
+  }
+  h1{
+    margin:0;
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--ivory);
+    letter-spacing: 0.2px;
+  }
+  h1 .ur{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-size: 1.35em;
+    font-weight: 700;
+    color: var(--gold-soft);
+    display:block;
+    margin-bottom: 6px;
+    line-height: 1.9;
+  }
+  header p{
+    color: var(--muted);
+    font-size: 14.5px;
+    max-width: 480px;
+    margin: 10px auto 0;
+    line-height: 1.6;
+  }
+
+  /* ---------- Card ---------- */
+  .card{
+    background: linear-gradient(180deg, var(--ink-2), var(--ink-3));
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 30px 60px -25px rgba(0,0,0,.6);
+  }
+
+  /* ---------- Mode toggle ---------- */
+  .toolbar{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .mode-switch{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    background: rgba(0,0,0,.18);
+    border: 1px solid var(--border);
+    padding: 6px 6px 6px 14px;
+    border-radius: 999px;
+  }
+  .mode-switch span{
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .mode-switch .label-active{ color: var(--gold-soft); font-weight:600; }
+  .switch{
+    position: relative;
+    width: 46px; height: 26px;
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    cursor:pointer;
+    border: 1px solid var(--border);
+    flex-shrink:0;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:2px; left:2px;
+    width:20px; height:20px;
+    background: var(--gold-soft);
+    border-radius:50%;
+    transition: transform .22s ease, background .22s ease;
+  }
+  .switch.on{ background: rgba(205,164,63,.25); border-color: var(--gold); }
+  .switch.on::after{ transform: translateX(20px); background: var(--gold); }
+
+  .hint-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Manuscript page (textarea) ---------- */
+  .page-frame{
+    position: relative;
+    padding: 3px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--gold) 0%, rgba(205,164,63,.15) 30%, rgba(205,164,63,.15) 70%, var(--maroon-soft) 100%);
+    margin-bottom: 16px;
+  }
+  .page-inner{
+    background: #0f0d1a;
+    border-radius: calc(var(--radius) - 3px);
+    padding: 4px;
+  }
+  textarea#output{
+    width: 100%;
+    min-height: 190px;
+    resize: vertical;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ivory);
+    font-family: 'Noto Nastaliq Urdu', serif;
+    font-size: var(--ur-size, 30px);
+    line-height: 2.3;
+    direction: rtl;
+    text-align: right;
+    padding: 22px 24px;
+  }
+  textarea#output::placeholder{
+    color: rgba(243,234,217,.28);
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .page-foot{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 8px 6px 2px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ---------- Action row ---------- */
+  .actions{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .btn{
+    font-family:'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ivory);
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border-soft);
+    padding: 9px 16px;
+    border-radius: 10px;
+    cursor:pointer;
+    transition: background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .btn:hover{ background: rgba(255,255,255,.09); border-color: var(--border); }
+  .btn:active{ transform: scale(.96); }
+  .btn.gold{
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #211a08;
+    border: none;
+  }
+  .btn.gold:hover{ filter: brightness(1.05); }
+
+  .size-ctrl{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-inline-start: auto;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .size-ctrl input[type=range]{ accent-color: var(--gold); width:100px; }
+
+  /* ---------- Section labels ---------- */
+  .section-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    opacity:.8;
+    margin: 26px 0 12px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .section-title::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ---------- Virtual keyboard ---------- */
+  .kb-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    direction: rtl;
+  }
+  .key{
+    position: relative;
+    aspect-ratio: 1;
+    background: radial-gradient(circle at 30% 25%, #2b253f, #1a1730 75%);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    color: var(--ivory);
+    font-family: 'Noto Nastaliq Urdu', serif;
+    font-size: 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition: transform .08s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .key small{
+    position:absolute;
+    bottom: 3px;
+    inset-inline-end: 5px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 8.5px;
+    color: var(--gold-soft);
+    opacity:.7;
+    direction: ltr;
+  }
+  .key:hover{ border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+  .key:active, .key.pressed{ transform: scale(.9); background: radial-gradient(circle at 30% 25%, var(--maroon), #3a1620 75%); }
+
+  .kb-grid.aspirated .key{ font-size: 19px; }
+
+  .special-row{
+    display:flex;
+    gap:8px;
+    margin-top: 10px;
+    direction: rtl;
+  }
+  .key.wide{ flex:1; aspect-ratio: auto; height:48px; font-size: 15px; font-family:'Manrope',sans-serif; font-weight:600; }
+
+  /* ---------- Legend ---------- */
+  details{
+    margin-top: 26px;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow:hidden;
+  }
+  summary{
+    cursor:pointer;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--gold-soft);
+    background: rgba(255,255,255,.03);
+    list-style: none;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{ content:'+'; font-size: 18px; color: var(--muted); }
+  details[open] summary::after{ content:'–'; }
+  .legend-body{
+    padding: 8px 18px 20px;
+  }
+  .legend-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px,1fr));
+    gap: 10px 16px;
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-size: 13.5px;
+  }
+  .legend-item .ur{ font-family:'Noto Nastaliq Urdu', serif; font-size: 20px; color: var(--ivory); }
+  .legend-item .rm{ font-family:'IBM Plex Mono', monospace; color: var(--gold-soft); font-size: 12px; }
+  .legend-note{
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 30px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 520px){
+    .kb-grid{ grid-template-columns: repeat(auto-fill, minmax(42px,1fr)); }
+    .key{ font-size: 18px; }
+    textarea#output{ font-size: 24px; padding: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Type in Urdu — no physical keyboard needed</div>
+    <h1><span class="ur">اردو کیبورڈ</span>Urdu Keyboard</h1>
+    <p>Type phonetically on your English keyboard, or click letters directly. Press <b style="color:var(--gold-soft)">A</b> for ا, <b style="color:var(--gold-soft)">B</b> for ب — it just works.</p>
+  </header>
+
+  <div class="card">
+
+    <div class="toolbar">
+      <div class="mode-switch">
+        <span id="modeOffLabel">Click only</span>
+        <div class="switch on" id="modeSwitch" role="switch" aria-checked="true" tabindex="0"></div>
+        <span id="modeOnLabel" class="label-active">Phonetic typing</span>
+      </div>
+      <div class="hint-pill" id="hintPill">Try typing: <b style="color:var(--gold-soft)">"pakistan"</b></div>
+    </div>
+
+    <div class="page-frame">
+      <div class="page-inner">
+        <textarea id="output" placeholder="یہاں لکھیں…" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="page-foot">
+      <span id="charCount">0 حروف · 0 characters</span>
+      <span>RTL manuscript view</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn gold" id="copyBtn">Copy text</button>
+      <button class="btn" id="spaceBtn">Space</button>
+      <button class="btn" id="backspaceBtn">⌫ Backspace</button>
+      <button class="btn" id="clearBtn">Clear</button>
+      <div class="size-ctrl">
+        <span>Aa</span>
+        <input type="range" id="sizeSlider" min="20" max="46" value="30">
+        <span style="font-family:'Noto Nastaliq Urdu';font-size:16px;">آ</span>
+      </div>
+    </div>
+
+    <div class="section-title">Virtual keyboard</div>
+    <div class="kb-grid" id="kbMain"></div>
+
+    <div class="special-row">
+      <div class="key wide" data-insert="،">، comma</div>
+      <div class="key wide" data-insert="۔">۔ full stop</div>
+      <div class="key wide" data-insert="؟">؟ question</div>
+      <div class="key wide" data-insert="ٹ">ٹ</div>
+    </div>
+
+    <div class="section-title">Aspirated letters (click only)</div>
+    <div class="kb-grid aspirated" id="kbAspirated"></div>
+
+    <div class="section-title">Diacritics — اعراب (zabar, zair, pesh…)</div>
+    <div class="kb-grid diacritics" id="kbDiacritics"></div>
+    <p class="legend-note" style="margin-top:10px;">Diacritics attach to whichever letter comes right before them — type the letter first, then the mark. Shown here over a placeholder dash (ـ) so they're visible on their own.</p>
+
+    <details>
+      <summary>Phonetic key — what each letter types</summary>
+      <div class="legend-body">
+        <div class="legend-grid" id="legendGrid"></div>
+        <p class="legend-note">
+          This is a simplified Roman-Urdu scheme, not an official standard — built for speed, not
+          linguistic completeness. Capital letters reach the "heavier" Arabic-origin sounds
+          (e.g. <b>t</b> → ت but <b>T</b> → ٹ, <b>H</b> → ح). Letters without a common English
+          sound (ص ض ط ظ ذ ث ع ھ ء ں) are click-only — find them on the keyboard above.
+          Number keys 1–9 are reserved for diacritics while phonetic typing is on, so plain digits
+          won't type directly in that mode — switch the toggle off if you need to type numbers.
+        </p>
+      </div>
+    </details>
+
+  </div>
+
+  <footer>Built for anyone without a physical Urdu keyboard.</footer>
+</div>
+
+<script>
+(function(){
+  const output = document.getElementById('output');
+  const modeSwitch = document.getElementById('modeSwitch');
+  const modeOnLabel = document.getElementById('modeOnLabel');
+  const modeOffLabel = document.getElementById('modeOffLabel');
+  const hintPill = document.getElementById('hintPill');
+  let phoneticMode = true;
+
+  // ---------- Phonetic map ----------
+  // digraphs checked first (longest match), then single-key map
+  const DIGRAPHS = { kh:'خ', gh:'غ', sh:'ش', zh:'ژ' };
+  const SINGLES = {
+    a:'ا', A:'آ', b:'ب', p:'پ', t:'ت', T:'ٹ', s:'س', c:'چ', j:'ج',
+    H:'ح', d:'د', D:'ڈ', z:'ز', Z:'ظ', r:'ر', R:'ڑ', f:'ف', q:'ق',
+    k:'ک', g:'گ', l:'ل', m:'م', n:'ن', w:'و', v:'و', o:'و', u:'و',
+    h:'ہ', y:'ی', i:'ی', e:'ے', E:'ع', "'":'ء', n2:'ں'
+  };
+
+  // diacritics (اعراب) — combining marks that sit on the preceding letter.
+  // mapped to number keys so they don't collide with the consonant/vowel letters above.
+  const DIACRITICS = [
+    { key:'1', mark:'\u064E', name:'zabar (fatha)' },
+    { key:'2', mark:'\u0650', name:'zair (kasra)' },
+    { key:'3', mark:'\u064F', name:'pesh (damma)' },
+    { key:'4', mark:'\u0652', name:'sukoon (jazm)' },
+    { key:'5', mark:'\u0651', name:'shad / tashdid' },
+    { key:'6', mark:'\u064B', name:'do zabar (tanwin)' },
+    { key:'7', mark:'\u064D', name:'do zair (tanwin)' },
+    { key:'8', mark:'\u064C', name:'do pesh (tanwin)' },
+    { key:'9', mark:'\u0670', name:'khari zabar' }
+  ];
+  DIACRITICS.forEach(d => { SINGLES[d.key] = d.mark; });
+
+  // full alphabet for the main virtual keyboard, in traditional order
+  const ALPHABET = ['ا','آ','ب','پ','ت','ٹ','ث','ج','چ','ح','خ','د','ڈ','ذ','ر','ڑ','ز','ژ','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ک','گ','ل','م','ن','ں','و','ہ','ھ','ء','ی','ے'];
+  const ASPIRATED = ['بھ','پھ','تھ','ٹھ','دھ','ڈھ','جھ','کھ','گھ','ڑھ'];
+
+  // reverse lookup for hints on the main keyboard
+  const REVERSE = {};
+  Object.entries(DIGRAPHS).forEach(([k,v]) => REVERSE[v] = k);
+  Object.entries(SINGLES).forEach(([k,v]) => { if(!REVERSE[v]) REVERSE[v] = k; });
+
+  function buildKeyboard(container, list, showHint){
+    list.forEach(ch => {
+      const el = document.createElement('div');
+      el.className = 'key';
+      el.textContent = ch;
+      if(showHint && REVERSE[ch]){
+        const s = document.createElement('small');
+        s.textContent = REVERSE[ch];
+        el.appendChild(s);
+      }
+      el.addEventListener('click', () => insertAtCursor(ch));
+      container.appendChild(el);
+    });
+  }
+  buildKeyboard(document.getElementById('kbMain'), ALPHABET, true);
+  buildKeyboard(document.getElementById('kbAspirated'), ASPIRATED, false);
+  document.querySelectorAll('.special-row .key').forEach(el=>{
+    el.addEventListener('click', ()=> insertAtCursor(el.dataset.insert));
+  });
+
+  // diacritics keyboard: shown over a tatweel (ـ) placeholder for visibility,
+  // but only the raw mark is inserted so it lands on the real preceding letter.
+  const TATWEEL = '\u0640';
+  const kbDiacritics = document.getElementById('kbDiacritics');
+  DIACRITICS.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'key';
+    el.textContent = TATWEEL + d.mark;
+    const s = document.createElement('small');
+    s.textContent = d.key;
+    el.appendChild(s);
+    el.title = d.name;
+    el.addEventListener('click', () => insertAtCursor(d.mark));
+    kbDiacritics.appendChild(el);
+  });
+
+  // ---------- Legend ----------
+  const legendGrid = document.getElementById('legendGrid');
+  const legendEntries = [
+    ...Object.entries(DIGRAPHS),
+    ...Object.entries(SINGLES).filter(([k])=>k!=='n2' && !/^[1-9]$/.test(k))
+  ];
+  legendEntries.forEach(([roman, ur])=>{
+    const div = document.createElement('div');
+    div.className = 'legend-item';
+    div.innerHTML = `<span class="ur">${ur}</span><span class="rm">${roman}</span>`;
+    legendGrid.appendChild(div);
+  });
+  DIACRITICS.forEach(d=>{
+    const div = document.createElement('div');
+    div.className = 'legend-item';
+    div.innerHTML = `<span class="ur">${TATWEEL}${d.mark}</span><span class="rm">${d.key} · ${d.name}</span>`;
+    legendGrid.appendChild(div);
+  });
+
+  // ---------- Cursor-aware insert (used by clicks) ----------
+  function insertAtCursor(str){
+    const start = output.selectionStart ?? output.value.length;
+    const end = output.selectionEnd ?? output.value.length;
+    output.value = output.value.slice(0,start) + str + output.value.slice(end);
+    const pos = start + str.length;
+    output.focus();
+    output.setSelectionRange(pos,pos);
+    lastKey = null;
+    updateFoot();
+  }
+
+  // ---------- Phonetic typing engine ----------
+  let lastKey = null; // roman key that produced the immediately-preceding char, only valid at end-of-text streaks
+
+  output.addEventListener('keydown', (e) => {
+    if(!phoneticMode) return;
+    if(e.ctrlKey || e.metaKey) return; // allow copy/paste/select-all etc.
+    const key = e.key;
+
+    if(key === 'Backspace'){ lastKey = null; return; }
+    if(key === 'Enter'){ lastKey = null; return; }
+    if(key === ' '){ lastKey = null; return; }
+    if(key.length !== 1){ return; } // arrows, tab, etc. pass through
+
+    const atEnd = output.selectionStart === output.value.length && output.selectionEnd === output.value.length;
+    e.preventDefault();
+
+    if(atEnd && lastKey && DIGRAPHS[lastKey+key]){
+      output.value = output.value.slice(0,-1) + DIGRAPHS[lastKey+key];
+      lastKey = null;
+    } else {
+      const mapped = SINGLES[key];
+      const toInsert = mapped !== undefined ? mapped : key;
+      const start = output.selectionStart, end = output.selectionEnd;
+      output.value = output.value.slice(0,start) + toInsert + output.value.slice(end);
+      output.setSelectionRange(start+toInsert.length, start+toInsert.length);
+      lastKey = (atEnd && mapped !== undefined) ? key : null;
+    }
+    updateFoot();
+  });
+
+  output.addEventListener('input', updateFoot);
+
+  // ---------- Mode toggle ----------
+  function setMode(on){
+    phoneticMode = on;
+    modeSwitch.classList.toggle('on', on);
+    modeSwitch.setAttribute('aria-checked', on);
+    modeOnLabel.classList.toggle('label-active', on);
+    modeOffLabel.classList.toggle('label-active', !on);
+    hintPill.style.opacity = on ? '1' : '0.35';
+    lastKey = null;
+  }
+  modeSwitch.addEventListener('click', () => setMode(!phoneticMode));
+  modeSwitch.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setMode(!phoneticMode); }
+  });
+
+  // ---------- Action buttons ----------
+  document.getElementById('spaceBtn').addEventListener('click', ()=> insertAtCursor(' '));
+  document.getElementById('backspaceBtn').addEventListener('click', ()=>{
+    const start = output.selectionStart, end = output.selectionEnd;
+    if(start !== end){
+      output.value = output.value.slice(0,start) + output.value.slice(end);
+      output.setSelectionRange(start,start);
+    } else if(start > 0){
+      output.value = output.value.slice(0,start-1) + output.value.slice(start);
+      output.setSelectionRange(start-1,start-1);
+    }
+    output.focus();
+    lastKey = null;
+    updateFoot();
+  });
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    output.value = '';
+    output.focus();
+    lastKey = null;
+    updateFoot();
+  });
+  document.getElementById('copyBtn').addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(output.value);
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(()=> btn.textContent = old, 1200);
+    }catch(err){
+      output.select();
+      document.execCommand('copy');
+    }
+  });
+
+  // ---------- Font size ----------
+  document.getElementById('sizeSlider').addEventListener('input', (e)=>{
+    output.style.setProperty('--ur-size', e.target.value + 'px');
+    output.style.fontSize = e.target.value + 'px';
+  });
+
+  // ---------- Char count ----------
+  function updateFoot(){
+    const len = output.value.length;
+    document.getElementById('charCount').textContent = `${len} حروف · ${len} characters`;
+  }
+  updateFoot();
+  setMode(true);
+})();
+</script>
+</body>
+</html>
